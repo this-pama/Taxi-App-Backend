@@ -4,10 +4,20 @@ const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 const port = process.env.PORT || 3000;
 
+let taxiRequest = null;
+
 io.on("connection", socket => {  
     console.log("a user connected :D");
-socket.on("taxiRequest", route => {    
-    console.log(route);    
+    socket.on("taxiRequest", routeResponse => {  
+        console.log('Someone is looking for a taxi')  
+        if(taxiRequest != null){
+            taxiRequest.emit('taxiRequest', routeResponse)
+        }  
+    });
+
+    socket.on("lookingForPassenger", ()=>{
+        console.log("Someone is looking for a passenger");
+        taxiRequest = socket;
     });
 });
 
